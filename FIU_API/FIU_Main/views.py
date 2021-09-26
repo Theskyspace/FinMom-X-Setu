@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse,redirect
 from django.contrib.auth.models import User
+# from .models import Consent
 from django.contrib.auth import authenticate, login , logout
 from django.contrib import messages
 
@@ -7,6 +8,7 @@ from django.contrib import messages
 
 
 def index(request):
+    
     return render(request,"Index.html")
 
 def SignupHandle(request):
@@ -38,10 +40,16 @@ def Handlelogin(request):
         loginphnno = request.POST['loginphnno']
         loginpass1 = request.POST['loginpass1']
     user = authenticate(username = loginphnno,password = loginpass1)
+    
 
 
     if user is not None:
         login(request,user)
+
+        try:
+            print(user.consent.Consent_ID)
+        except:
+            return HttpResponse("Consent ID not found Try to create a new one")
         messages.success(request,"Successfully login")
         return redirect("index")
     else:
