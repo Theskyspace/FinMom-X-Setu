@@ -1,0 +1,30 @@
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+.custom-nav{
+    position: relative;
+    right: 0px;
+}
+
+
+.btn{
+    margin: 10px;
+}
+
+.hero-img{
+    height: 50vh;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.col h2{
+    font-size: xx-large;
+    position: relative;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%,-50%);
+}
