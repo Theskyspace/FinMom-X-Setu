@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load extras %}
+
+{% block content %}
+<div class="container">
+    <h1>"Bonds Data"</h1>
+    <pre>{{ DataJson | pretty_json }}</pre>
+</div>
+
+{% endblock content %}

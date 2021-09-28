@@ -3,5 +3,29 @@
 {% load static %}
 
 {% block content %}
-<h1>{{message}}</h1>
+
+<div class="container">
+    <div class="hoverme">
+        {% if img == 'Approved.jpg' %}
+        <img class="img-fluid mx-auto d-block" src="{% static 'img/Approved.jpg' %}" alt="photo" style="height: 50vh;">
+        {% elif img == 'Siging.jpg' %}
+        <img class="img-fluid mx-auto d-block" src="{% static 'img/Siging.jpg' %}" alt="photo" style="height: 50vh;">
+        {% endif %}
+    </div>
+    <h4 class="text-center">{{message}}</h4>
+    <div class="text-center">
+        {% if consent == 'pending' %}
+            <button type="button" class="btn btn-lg btn-warning"><a href="{{urlapprove}}" target="_blank" style="color: black;text-decoration: none;">Approve the Consent</a></button>
+            <button type="button" class="btn btn-lg btn-success"><a href="ConsentFlow" style="color: white;text-decoration: none;">Done</a></button>
+        {% elif consent == "Ready" %}
+            <button type="button" class="btn btn-lg btn-success"><a href="DashBoard" style="color: white;text-decoration: none;">Done</a></button>
+        {% else %}
+            <button type="button" class="btn btn-lg btn-warning">Approve the Consent</button>
+            <button type="button" class="btn btn-lg btn-success">Done</button>
+        
+        {% endif %}
+    </div>
+
+</div>
+
 {% endblock content %}

@@ -9,6 +9,8 @@ urlpatterns = [
     path('logout', views.Handlelogout, name='Handlelogout'),
     path('CheckConsent', views.Handlelogout, name='Handlelogout'),
     path('ConsentFlow', views.ConsentFlow, name='ConsentFlow'),
+    path('DashBoard', views.DataDashBoard, name='DataDashBoard'),
+    
 
 
 ]
