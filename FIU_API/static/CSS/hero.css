@@ -13,6 +13,16 @@ html,body{
     margin: 10px;
 }
 
+nav{
+    position: fixed;
+    background-color: transparent;
+    z-index: 1000;
+}
+
+.list-items{
+    padding-top: 10vh;
+}
+
 .hero-img{
     height: 50vh;
     position: relative;
@@ -27,4 +37,39 @@ html,body{
     top: 50%;
     left: 70%;
     transform: translate(-50%,-50%);
+}
+
+.nav-link{
+    color: white;
+    text-decoration: none;
+}
+
+.custom-area{
+    margin-top: 5vh;
+}
+
+.custom-dashboard{
+    background-color: 	#f8f8ff;
+}
+
+.glass-btn{
+    background: rgba( 255, 255, 255, 0.4 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 ); 
+    /* Add blur effect to background*/
+    backdrop-filter: blur( 4.0px );
+    -webkit-backdrop-filter: blur( 4.0px );
+    border: 1px solid rgba( 255, 255, 255, 0.18 ); 
+    border-radius: 10px;    
+}
+
+.fun-money{
+    background: rgb(131,58,180);
+    background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);
+    border-radius: 5%;
+    width: 22rem;
+    height: 13rem;
+    color: white;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+    z-index: 1;
+
 }
