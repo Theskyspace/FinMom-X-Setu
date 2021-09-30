@@ -1,0 +1,11 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load extras %}
+
+
+{% block content %}
+<div class="container-fluid" style="padding-top: 20vh;">
+    <h1>{{Heading}}</h1>
+    <pre>{{ DataJson | pretty_json }}</pre>
+</div>
+{% endblock content %}

@@ -10,6 +10,7 @@ urlpatterns = [
     path('CheckConsent', views.Handlelogout, name='Handlelogout'),
     path('ConsentFlow', views.ConsentFlow, name='ConsentFlow'),
     path('DashBoard', views.DataDashBoard, name='DataDashBoard'),
+    path('data', views.data, name='data'),
     
 
 

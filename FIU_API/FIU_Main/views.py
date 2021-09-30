@@ -140,63 +140,152 @@ def ConsentFlow(request):
 
 @login_required(login_url = "index")
 def DataDashBoard(request):
-    # user = request.user
-    # loc_Consent_ID = Consent.objects.get(user = user).ConsentID
+    user = request.user
+    loc_Consent_ID = Consent.objects.get(user = user).ConsentID
     # print('***************' , loc_Consent_ID) 
 
-    # UrlSigned = base_url + "/Consent/" + loc_Consent_ID
-    # Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
-    # json_data = json.loads(Fetch_Signed_Consent.text)
-    # signedConsent = json_data["signedConsent"]
+    UrlSigned = base_url + "/Consent/" + loc_Consent_ID
+    Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
+    json_data = json.loads(Fetch_Signed_Consent.text)
+    signedConsent = json_data["signedConsent"]
+
+    # Generate Key material
+    KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
+    KeyMaterialData = requests.get(KeyMaterialURL)
+
+    # print("**************" , KeyMaterialData.text)
+    KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
 
 
-    # # Generate Key material
-    # KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
-    # KeyMaterialData = requests.get(KeyMaterialURL)
-    # KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
-    # base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
-    # ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+    #Request FI DATA
+    UrlFIdata = base_url + "/FI/request"
+    Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
+    Request_FI_Data["txnid"] = str(uuid.uuid1())
+    Request_FI_Data["Consent"]["id"] = loc_Consent_ID
+    Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
+    Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
+    # print(Request_FI_Data)
 
-
-    # #Request FI DATA
-    # UrlFIdata = base_url + "/FI/request"
-    # Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
-    # Request_FI_Data["txnid"] = str(uuid.uuid1())
-    # Request_FI_Data["Consent"]["id"] = loc_Consent_ID
-    # Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
-    # Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
-    # # print(Request_FI_Data)
-
-    # Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
-    # aa_session_id = Request_FI_Data_post_json["sessionId"]
+    Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
+    aa_session_id = Request_FI_Data_post_json["sessionId"]
     
-    # # Fetch The data
-    # Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
-    # Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
-    # Fetch_Data_JSON = json.loads(Fetch_Data.text)
+    # Fetch The data
+    Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
+    Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
+    Fetch_Data_JSON = json.loads(Fetch_Data.text)
     
 
-    # #Decrypt Data
-    # base64Data = Fetch_Data_JSON["FI"][0]["data"][0]["encryptedFI"]
-    # base64RemoteNonce = Fetch_Data_JSON["FI"][0]["KeyMaterial"]["Nonce"]
-    # #base64YourNonce = Defined from the above Generating Key material step
-    # #ourPrivateKey = Generated above Generating Key material step
-    # remoteKeyMaterial = Fetch_Data_JSON["FI"][0]["KeyMaterial"]
+    #Decrypt Data
+    base64Data_bank = Fetch_Data_JSON["FI"][1]["data"][0]["encryptedFI"]
+    base64RemoteNonce_bank = Fetch_Data_JSON["FI"][1]["KeyMaterial"]["Nonce"]
+    #base64YourNonce = Defined from the above Generating Key material step
+    #ourPrivateKey = Generated above Generating Key material step
+    remoteKeyMaterial_bank = Fetch_Data_JSON["FI"][1]["KeyMaterial"]
 
-    # Decrpyt_Body["base64Data"] = base64Data;
-    # Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
-    # Decrpyt_Body["base64YourNonce"] = base64YourNonce;
-    # Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
-    # Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+    Decrpyt_Body["base64Data"] = base64Data_bank;
+    Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce_bank;
+    Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+    Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+    Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial_bank;
     
-    # url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
-    # Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
-    # Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+    url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+    Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+    Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
 
-    # Base64_Data = Data_Decrypt_JSON["base64Data"]
-    # Decoded_Data = base64.b64decode(Base64_Data)  
-    # Decoded_Data_JSON = json.loads(Decoded_Data)  
+    Base64_Data_bank = Data_Decrypt_JSON["base64Data"]
+    Decoded_Data_bank = base64.b64decode(Base64_Data_bank)  
+    Decoded_Data_Bank_JSON = json.loads(Decoded_Data_bank)  
+    
+    Bank_info_rel = Bank(request, Decoded_Data_Bank_JSON)
+    content = Bank_info_rel
+    print(Bank_info_rel)
+    return render(request,"DashBoard.html",content)
 
-    # return render(request,"DashBoard.html",{"DataJson":Decoded_Data_JSON})
-    return render(request,"DashBoard.html")
 
+
+def data(request):
+    user = request.user
+    loc_Consent_ID = Consent.objects.get(user = user).ConsentID
+    print('***************' , loc_Consent_ID) 
+
+    UrlSigned = base_url + "/Consent/" + loc_Consent_ID
+    Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
+    json_data = json.loads(Fetch_Signed_Consent.text)
+    signedConsent = json_data["signedConsent"]
+
+
+    # Generate Key material
+    KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
+    KeyMaterialData = requests.get(KeyMaterialURL)
+    KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+
+
+    #Request FI DATA
+    UrlFIdata = base_url + "/FI/request"
+    Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
+    Request_FI_Data["txnid"] = str(uuid.uuid1())
+    Request_FI_Data["Consent"]["id"] = loc_Consent_ID
+    Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
+    Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
+    # print(Request_FI_Data)
+
+    Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
+    aa_session_id = Request_FI_Data_post_json["sessionId"]
+    
+    # Fetch The data
+    Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
+    Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
+    Fetch_Data_JSON = json.loads(Fetch_Data.text)
+    
+
+    #Decrypt Data
+    base64Data = Fetch_Data_JSON["FI"][1]["data"][0]["encryptedFI"]
+    base64RemoteNonce = Fetch_Data_JSON["FI"][1]["KeyMaterial"]["Nonce"]
+    #base64YourNonce = Defined from the above Generating Key material step
+    #ourPrivateKey = Generated above Generating Key material step
+    remoteKeyMaterial = Fetch_Data_JSON["FI"][1]["KeyMaterial"]
+
+    Decrpyt_Body["base64Data"] = base64Data;
+    Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
+    Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+    Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+    Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+    
+    url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+    Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+    Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+
+    Base64_Data = Data_Decrypt_JSON["base64Data"]
+    Decoded_Data = base64.b64decode(Base64_Data)  
+    Decoded_Data_JSON = json.loads(Decoded_Data)  
+
+    return render(request,"data.html",{"DataJson":Decoded_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][1]["fipId"]})
+
+
+
+def Bank(request,bank_data):
+    elements = len(bank_data["account"]["transactions"]["transaction"])
+    month_expense = 0
+    currentBalance = bank_data["account"]["summary"]["currentBalance"]
+    currentmonth = 13
+    for i in range(elements-1 , 0 , -1):
+        month = int(bank_data["account"]["transactions"]["transaction"][i]["valueDate"].split('-')[1])
+        if(currentmonth == 13):
+            currentmonth = month
+        
+        if(currentmonth != month):
+            break
+
+        if(bank_data["account"]["transactions"]["transaction"][i]["type"] == "DEBIT"):
+            spending = float(bank_data["account"]["transactions"]["transaction"][i]["amount"])
+            month_expense += spending
+
+    print("Total amount spent this month : ","{:,}".format(month_expense))
+    print("{:,}".format(month_expense))
+    
+    information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance}
+    return information_exchange
