@@ -198,9 +198,16 @@ def DataDashBoard(request):
     Decoded_Data_bank = base64.b64decode(Base64_Data_bank)  
     Decoded_Data_Bank_JSON = json.loads(Decoded_Data_bank)  
     
+    '''
+    Informaion sent through the content is 
+    content = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , Transation : [{naration , date , amount , nature},{naration , data , amount , nature},...] }
+    '''
+
     Bank_info_rel = Bank(request, Decoded_Data_Bank_JSON)
     content = Bank_info_rel
-    print(Bank_info_rel)
+    print("&&&&&&&&&&&&&&&&&&&&&&" ,  content)
+
+    print('\n' ,Bank_info_rel,'\n' )
     return render(request,"DashBoard.html",content)
 
 
@@ -272,6 +279,9 @@ def Bank(request,bank_data):
     month_expense = 0
     currentBalance = bank_data["account"]["summary"]["currentBalance"]
     currentmonth = 13
+    cnt = 0
+    transactions = []
+    
     for i in range(elements-1 , 0 , -1):
         month = int(bank_data["account"]["transactions"]["transaction"][i]["valueDate"].split('-')[1])
         if(currentmonth == 13):
@@ -279,13 +289,19 @@ def Bank(request,bank_data):
         
         if(currentmonth != month):
             break
+        #Add the transation details to the screen to make user understand the recent passbook history.
+        
+        if(cnt < 4):
+            a = [bank_data["account"]["transactions"]["transaction"][i]["narration"] , bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , bank_data["account"]["transactions"]["transaction"][i]["amount"]]
+            print("\n A data \n" , a , '\n')
+            transactions.append(a)
+            cnt += 1
 
         if(bank_data["account"]["transactions"]["transaction"][i]["type"] == "DEBIT"):
             spending = float(bank_data["account"]["transactions"]["transaction"][i]["amount"])
             month_expense += spending
-
-    print("Total amount spent this month : ","{:,}".format(month_expense))
-    print("{:,}".format(month_expense))
+            
+         
     
-    information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance}
+    information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , "transaction" : transactions}
     return information_exchange
