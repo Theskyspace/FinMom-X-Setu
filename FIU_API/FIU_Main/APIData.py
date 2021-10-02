@@ -40,9 +40,7 @@ consent_obj = {
         ],
         "fiTypes": [
             "DEPOSIT",
-            "BONDS",
-            "INSURANCE_POLICIES",
-            "PPF"
+            "EQUITIES"
         ],
         "DataConsumer": {
             "id": "FIU"

@@ -11,6 +11,7 @@ urlpatterns = [
     path('ConsentFlow', views.ConsentFlow, name='ConsentFlow'),
     path('DashBoard', views.DataDashBoard, name='DataDashBoard'),
     path('data', views.data, name='data'),
+    path('UI' , views.UI , name = 'UI')
     
 
 

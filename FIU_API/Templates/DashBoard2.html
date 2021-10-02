@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <!--<title> Responsive Sidebar Menu  | CodingLab </title>-->
+  <link rel="stylesheet" href="{% static 'CSS/dashUI.css' %}">
+  <!-- Boxicons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Chart JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bx-money icon'></i>
+      <div class="logo_name">FINMOM</div>
+      <i class='bx bx-menu' id="btn"></i>
+    </div>
+    <ul class="nav-list">
+
+      <li>
+        <a href="#">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+        <span class="tooltip">Dashboard</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-book-open'></i>
+          <span class="links_name">Passbook</span>
+        </a>
+        <span class="tooltip">Passbook</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-user'></i>
+          <span class="links_name">Profile</span>
+        </a>
+        <span class="tooltip">User</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-rupee'></i>
+          <span class="links_name">Investments</span>
+        </a>
+        <span class="tooltip">Investments</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-target-lock'></i>
+          <span class="links_name">Goals</span>
+        </a>
+        <span class="tooltip">Goals</span>
+      </li>
+      <li class="profile">
+        <div class="profile-details">
+          <img
+            src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2018%2F09%2F26%2F170913-Aang-Avatar_The_Last_Airbender-angry-monochrome.jpg&f=1&nofb=1"
+            alt="profileImg">
+          <div class="name_job">
+            <div class="name">Welcome</div>
+            <div class="job">{{request.user.first_name}}</div>
+          </div>
+        </div>
+        <a href="logout"><i class='bx bx-log-out' id="log_out"></i></a>
+      </li>
+    </ul>
+  </div>
+
+  <section class="home-section">
+    <div class="text">Dashboard</div>
+    <div class="container">
+      <div class="row">
+        <div class="cards NetWorthCard">
+          <h1>Net Worth</h1>
+          <footer>
+            <h3>&#x20B9 0</h3>
+          </footer>
+        </div>
+        <div class="cards FunMoneyCard">
+          <h1>Fun Money</h1>
+          <footer>
+            <h3>&#x20B9 {{ month_expense }}</h3>
+          </footer>
+        </div>
+        <div class="cards InvestmentCard">
+          <h1>Investments</h1>
+          <footer>
+            <h3>&#x20B9 0</h3>
+          </footer>
+        </div>
+      </div>
+      <div class="row">
+        <div class="cards Transaction" style="min-height: 25rem;">
+          <h2>Transaction</h2>
+          <table>
+
+
+            {% for elements in transaction %}
+             
+              <tr style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
+                {% for a in elements%}
+                  <td>{{a}}</td>
+                {% endfor %}
+                <!-- <td><i class='bx bx-plus-medical'></i> Peter</td>
+                <td>Griffin</td>
+                <td>$100</td> -->
+              </tr>
+              <tr>
+            {% endfor %}
+          </table>
+        </div>
+        <div class="cards graph"><canvas id="myChart"></canvas></div>
+
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+  <script>
+    const labels = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+    ];
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'My First dataset',
+        backgroundColor: 'rgb(255, 99, 132,0)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [0, 10, 5, 100, 20, 250, 250],
+      },
+      {
+        label: 'My First dataset',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 0, 132)',
+        data: [0, 11, 52, 500, 30, 150, 250],
+      },]
+    };
+
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Investments'
+          },
+        },
+        interaction: {
+          intersect: false,
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Value'
+            },
+            suggestedMin: -10,
+            suggestedMax: 200
+          }
+        }
+      },
+    };
+
+    var myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+    let sidebar = document.querySelector(".sidebar");
+    let closeBtn = document.querySelector("#btn");
+
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      menuBtnChange();//calling the function(optional)
+    });
+
+
+    // following are the code to change sidebar button(optional)
+    function menuBtnChange() {
+      if (sidebar.classList.contains("open")) {
+        closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+      } else {
+        closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");//replacing the iocns class
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -166,7 +166,7 @@ def DataDashBoard(request):
     Request_FI_Data["Consent"]["id"] = loc_Consent_ID
     Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
     Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
-    # print(Request_FI_Data)
+    print("************",Request_FI_Data_post.text)
 
     Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
     aa_session_id = Request_FI_Data_post_json["sessionId"]
@@ -208,7 +208,7 @@ def DataDashBoard(request):
     print("&&&&&&&&&&&&&&&&&&&&&&" ,  content)
 
     print('\n' ,Bank_info_rel,'\n' )
-    return render(request,"DashBoard.html",content)
+    return render(request,"DashBoard2.html",content)
 
 
 
@@ -250,11 +250,11 @@ def data(request):
     
 
     #Decrypt Data
-    base64Data = Fetch_Data_JSON["FI"][1]["data"][0]["encryptedFI"]
-    base64RemoteNonce = Fetch_Data_JSON["FI"][1]["KeyMaterial"]["Nonce"]
+    base64Data = Fetch_Data_JSON["FI"][0]["data"][0]["encryptedFI"]
+    base64RemoteNonce = Fetch_Data_JSON["FI"][0]["KeyMaterial"]["Nonce"]
     #base64YourNonce = Defined from the above Generating Key material step
     #ourPrivateKey = Generated above Generating Key material step
-    remoteKeyMaterial = Fetch_Data_JSON["FI"][1]["KeyMaterial"]
+    remoteKeyMaterial = Fetch_Data_JSON["FI"][0]["KeyMaterial"]
 
     Decrpyt_Body["base64Data"] = base64Data;
     Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
@@ -270,7 +270,7 @@ def data(request):
     Decoded_Data = base64.b64decode(Base64_Data)  
     Decoded_Data_JSON = json.loads(Decoded_Data)  
 
-    return render(request,"data.html",{"DataJson":Decoded_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][1]["fipId"]})
+    return render(request,"data.html",{"DataJson":Decoded_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][0]["fipId"]})
 
 
 
@@ -292,7 +292,7 @@ def Bank(request,bank_data):
         #Add the transation details to the screen to make user understand the recent passbook history.
         
         if(cnt < 4):
-            a = [bank_data["account"]["transactions"]["transaction"][i]["narration"] , bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , bank_data["account"]["transactions"]["transaction"][i]["amount"]]
+            a = [(bank_data["account"]["transactions"]["transaction"][i]["narration"]) , bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , bank_data["account"]["transactions"]["transaction"][i]["amount"]]
             print("\n A data \n" , a , '\n')
             transactions.append(a)
             cnt += 1
@@ -305,3 +305,7 @@ def Bank(request,bank_data):
     
     information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , "transaction" : transactions}
     return information_exchange
+
+
+def UI(request):
+    return render(request,"DashBoard2.html")
