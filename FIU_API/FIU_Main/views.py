@@ -48,39 +48,16 @@ def Handlelogin(request):
         loginpass1 = request.POST['loginpass1']
         
         user = authenticate(username = loginphnno,password = loginpass1)
-    
-
-
+        
     if user is not None:
         login(request,user)
-        # Check here if Consent is already signed or not 
-        print(headers)
-        try:
-            local_consent_ID = user.consent.ConsentHandle;
-        except:
-            #API call for Consent_ID if it doesn't exist already
-            url = base_url + "/Consent";
-            consent_obj["txnid"] = str(uuid.uuid1());
-            x = requests.post(url, headers = headers, json = consent_obj)
-            xjson = x.json()
-            Consent_Handle = xjson["ConsentHandle"]
-            print("****Status Code", x.status_code)
-            
-            #Saving it to the database
-            a = Consent(user = user , ConsentHandle = Consent_Handle)
-            a.save()
-
-            #Setting the local Consent varible for future ref
-            local_consent_ID = user.consent.ConsentHandle;
-
-
             # Here I ask for the Consent ID and I add the entry to the data base
-        request.session['value'] = local_consent_ID
         messages.success(request,"Successfully login")
         return redirect("/ConsentFlow")
+
     else:
         messages.error(request,"Invalid Credential, Please login again or signup")
-        return redirect("/ConsentFlow")
+        return redirect("/")
 
 
 def Handlelogout(request):
@@ -91,14 +68,49 @@ def Handlelogout(request):
 
 @login_required(login_url = "index")
 def ConsentFlow(request):
-    
-    if 'value' in request.session:
-        simple_variable = request.session['value']
-
+    user = request.user
+     # Check here if Consent is already signed or not 
     try:
-        CheckConsentURL = base_url + "/Consent/handle/" + simple_variable;
+        user_consent_obj = user.consent.ConsentHandle
+        if(user_consent_obj == ""):
+            url = base_url + "/Consent";
+            consent_obj["txnid"] = str(uuid.uuid1());
+            consent_obj["ConsentDetail"]["fiTypes"] = eval(user.consent.consent_obj)
+
+            print("Consent Object \n",consent_obj)
+            x = requests.post(url, headers = headers, json = consent_obj)
+            print(x.text)
+            xjson = json.loads(x.text)
+            Consent_Handle = xjson["ConsentHandle"]
+            print("****Status Code", x.status_code)
+            print("\n","\n","\n",Consent_Handle,"\n","\n","\n")
+            #Saving it to the database
+            a = Consent.objects.get(user = user)
+            a.ConsentHandle = Consent_Handle
+            a.save()
+            #Setting the local Consent varible for future ref
+            
+            local_Consent_Handle = user.consent.ConsentHandle;
+            pritn("klansdknajksdaksdb    " , local_Consent_Handle)
+       
+    except:
+        try:
+            user_consent_obj = user.consent.consent_obj
+        except:
+            return redirect("/profile")
+        
+        #Setting the local Consent varible for future ref
+    
+    local_Consent_Handle = user.consent.ConsentHandle;
+
+    
+    
+    
+    try:
+        CheckConsentURL = base_url + "/Consent/handle/" + local_Consent_Handle;
         x = requests.get(CheckConsentURL , headers = headers)
         json_data = json.loads(x.text)
+        print(json_data)
         print("********",json_data["ConsentStatus"]["status"] == "READY")
         
         #If consent is accepted
@@ -117,7 +129,7 @@ def ConsentFlow(request):
            
             return redirect("DataDashBoard")
         else: 
-            urlapprove = "https://anumati.setu.co/" + simple_variable;
+            urlapprove = "https://anumati.setu.co/" + local_Consent_Handle;
             context = {
                 'message': 'Your Consent is pending Kindly make the Approval and then click on done',
                 'img': 'Siging.jpg',
@@ -128,6 +140,7 @@ def ConsentFlow(request):
 
     except Exception as e:
         print(e)
+
         context = {
                 'message': 'Please make the Consent to do Go further',
                 'img': 'none.jpg',
@@ -307,5 +320,14 @@ def Bank(request,bank_data):
     return information_exchange
 
 
-def UI(request):
-    return render(request,"DashBoard2.html")
+def profile(request):
+    return render(request,"profile.html")
+
+def checked(request):
+    print('\n' , request.GET , '\n')
+    user_consent_obj = list(request.GET.values())
+    user = request.user
+    b = Consent(user = user , consent_obj = user_consent_obj)
+    b.save()
+    print(" all values in dictionary are:",user_consent_obj)
+    return redirect("/ConsentFlow")

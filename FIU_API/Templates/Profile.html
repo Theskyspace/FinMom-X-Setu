@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container" style="padding-top: 100px;">
+    <form action="consent_obj" method="get" name="form">
+        <h4>Bank</h4>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="DEPOSIT" name="Deposit" id="flexCheckChecked" checked>
+          <label class="form-check-label" for="flexCheckChecked">
+            Deposits
+          </label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="TERM_DEPOSIT" name="TERM_DEPOSIT" id="flexCheckDefault">
+          <label class="form-check-label" for="flexCheckDefault">
+            Term deposits
+          </label>
+        </div>
+
+        
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="RECURRING_DEPOSIT" name="RECURRING_DEPOSIT" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+             Recurring deposits
+            </label>
+          </div>
+  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="CREDIT_CARD" name="CREDIT_CARD" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+            Credit Card
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="CD" name="CD" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Certificates of Deposit
+            </label>
+          </div>
+  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="IDR" name="IDR" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+            Indian Depository Receipts
+            </label>
+          </div>
+          <hr>
+          <h4>Insurance</h4>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="INSURANCE_POLICIES" name="INSURANCE_POLICIES" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Insurance Policies
+            </label>
+          </div>
+  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="ULIP" name="ULIP" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+            Unit Linked Insurance Plan
+            </label>
+          </div>
+
+          <hr>
+          <h4>Pension</h4>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="EPF" name="EPF" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+            Employee Provident Fund
+            </label>
+          </div>
+  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="PPF" name="PPF" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Public Provident Fund
+            </label>
+          </div>
+
+          <hr>
+          <h4>Investments</h4>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="MUTUAL_FUNDS" name="MUTUAL_FUNDS" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+            Mutual Funds
+            </label>
+          </div>
+  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="BONDS" name="BONDS" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+            Bonds
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="DEBENTURES" name="DEBENTURES" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Debentures 
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="ETF" name="ETF" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Exchange Traded Funds 
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="NPS" name="NPS" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                National Pension System
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="GOVT_SECURITIES" name="GOVT_SECURITIES" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Government Securities
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="CP" name="CP" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Commercial Paper
+            </label>
+          </div>
+        
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="REIT" name="REIT" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Real Estate Investment Trusts
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="INVIT" name="INVIT" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Infrastructure Investment Trusts
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="AIF" name="AIF" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Alternative Investment Funds 
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="SIP" name="SIP" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Systematic Investment Plan
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="EQUITIES" name="EQUITIES" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Equity Shares 
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="CIS" name="CIS" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Collective Investment Schemes
+            </label>
+          </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock content %}

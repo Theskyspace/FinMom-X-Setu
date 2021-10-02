@@ -35,12 +35,11 @@ consent_obj = {
         "fetchType": "ONETIME",
         "consentTypes": [
             "TRANSACTIONS",
-            "PROFILE",
             "SUMMARY"
         ],
         "fiTypes": [
             "DEPOSIT",
-            "EQUITIES"
+            "EQUITY"
         ],
         "DataConsumer": {
             "id": "FIU"
