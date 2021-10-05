@@ -40,12 +40,13 @@
         <span class="tooltip">Passbook</span>
       </li>
       <li>
-        <a href="#">
-          <i class='bx bx-user'></i>
-          <span class="links_name">Profile</span>
+        <a href="Break">
+          <i class='bx bx-table'></i>
+          <span class="links_name">NetWorth Breakout</span>
         </a>
-        <span class="tooltip">User</span>
+        <span class="tooltip">Investments</span>
       </li>
+     
       <li>
         <a href="#">
           <i class='bx bx-rupee'></i>
@@ -60,6 +61,13 @@
         </a>
         <span class="tooltip">Goals</span>
       </li>
+      <li>
+      <a href="profile">
+        <i class='bx bx-user'></i>
+        <span class="links_name">Profile</span>
+      </a>
+      <span class="tooltip">User</span>
+    </li>
       <li class="profile">
         <div class="profile-details">
           <img
@@ -108,7 +116,7 @@
              
               <tr style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
                 {% for a in elements%}
-                  <td>{{a}}</td>
+                  <td><span class="d-inline-block text-truncate" style="max-width: 150px;">{{a}}</span></td>
                 {% endfor %}
                 <!-- <td><i class='bx bx-plus-medical'></i> Peter</td>
                 <td>Griffin</td>
@@ -123,12 +131,6 @@
       </div>
     </div>
   </section>
-
-
-
-
-
-
 
 
   <script>

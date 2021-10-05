@@ -13,4 +13,5 @@ urlpatterns = [
     path('data', views.data, name='data'),
     path('profile', views.profile, name='profile'),
     path('consent_obj', views.checked, name='consent_obj'),
+    path('Break', views.breakout, name='breakout'),
 ]

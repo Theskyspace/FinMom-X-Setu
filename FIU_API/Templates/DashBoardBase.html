@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashBoard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <!-- Google Fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="{% static 'CSS/dashUI.css' %}">
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+    {% block style %}
+    {% endblock style %}
+
+</head>
+<body>
+    
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bx-money icon'></i>
+      <div class="logo_name">FINMOM</div>
+      <i class='bx bx-menu' id="btn"></i>
+    </div>
+    <ul class="nav-list">
+
+      <li>
+        <a href="/DashBoard">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+        <span class="tooltip">Dashboard</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-book-open'></i>
+          <span class="links_name">Passbook</span>
+        </a>
+        <span class="tooltip">Passbook</span>
+      </li>
+      <li>
+        <a href="/Break">
+          <i class='bx bx-table'></i>
+          <span class="links_name">NetWorth Breakout</span>
+        </a>
+        <span class="tooltip">Investments</span>
+      </li>
+     
+      <li>
+        <a href="#">
+          <i class='bx bx-rupee'></i>
+          <span class="links_name">Investments</span>
+        </a>
+        <span class="tooltip">Investments</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-target-lock'></i>
+          <span class="links_name">Goals</span>
+        </a>
+        <span class="tooltip">Goals</span>
+      </li>
+      <li>
+      <a href="/profile">
+        <i class='bx bx-user'></i>
+        <span class="links_name">Profile</span>
+      </a>
+      <span class="tooltip">User</span>
+    </li>
+      <li class="profile">
+        <div class="profile-details">
+          <img
+            src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2018%2F09%2F26%2F170913-Aang-Avatar_The_Last_Airbender-angry-monochrome.jpg&f=1&nofb=1"
+            alt="profileImg">
+          <div class="name_job">
+            <div class="name">Welcome</div>
+            <div class="job">{{request.user.first_name}}</div>
+          </div>
+        </div>
+        <a href="logout"><i class='bx bx-log-out' id="log_out"></i></a>
+      </li>
+    </ul>
+  </div>
+
+    <section class="home-section">
+  
+        {% block Content %}
+        {% endblock Content %}  
+    </section>
+
+
+<script>
+    {% block JS %}
+    {% endblock JS %}
+
+    let sidebar = document.querySelector(".sidebar");
+    let closeBtn = document.querySelector("#btn");
+
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      menuBtnChange();//calling the function(optional)
+    });
+
+
+    // following are the code to change sidebar button(optional)
+    function menuBtnChange() {
+      if (sidebar.classList.contains("open")) {
+        closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+      } else {
+        closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");//replacing the iocns class
+      }
+    }
+</script>
+</body>
+</html>

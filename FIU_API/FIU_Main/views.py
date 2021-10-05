@@ -12,7 +12,6 @@ import base64
 
 # Create your views here.
 
-
 signedConsent = None
 
 def index(request): 
@@ -59,12 +58,10 @@ def Handlelogin(request):
         messages.error(request,"Invalid Credential, Please login again or signup")
         return redirect("/")
 
-
 def Handlelogout(request):
     logout(request)
     messages.success(request, "Successfully logged out")
     return redirect('index')
-
 
 @login_required(login_url = "index")
 def ConsentFlow(request):
@@ -91,9 +88,10 @@ def ConsentFlow(request):
             #Setting the local Consent varible for future ref
             
             local_Consent_Handle = user.consent.ConsentHandle;
-            pritn("klansdknajksdaksdb    " , local_Consent_Handle)
+            print("\n\n\nLocal Consent : " , local_Consent_Handle , "\n\n")
        
-    except:
+    except Exception as e:
+        print("\n\nConsent Flow 1st Try\n" , e , "\n\n\n")
         try:
             user_consent_obj = user.consent.consent_obj
         except:
@@ -139,7 +137,7 @@ def ConsentFlow(request):
             return render(request,"ConsentFlow.html",context)
 
     except Exception as e:
-        print(e)
+        print("\n\nConsent Flow 2st Try\n" , e , "\n\n\n")
 
         context = {
                 'message': 'Please make the Consent to do Go further',
@@ -149,7 +147,6 @@ def ConsentFlow(request):
         return render(request,"ConsentFlow.html",context)
 
     return HttpResponse("<h1>This is the consent page</h1>")
-
 
 @login_required(login_url = "index")
 def DataDashBoard(request):
@@ -166,7 +163,7 @@ def DataDashBoard(request):
     KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
     KeyMaterialData = requests.get(KeyMaterialURL)
 
-    # print("**************" , KeyMaterialData.text)
+    print("**************\n\n\n" , KeyMaterialData.text)
     KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
     base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
     ourPrivateKey = KeyMaterialData_JSON["privateKey"]
@@ -188,42 +185,45 @@ def DataDashBoard(request):
     Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
     Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
     Fetch_Data_JSON = json.loads(Fetch_Data.text)
-    
-
-    #Decrypt Data
-    base64Data_bank = Fetch_Data_JSON["FI"][1]["data"][0]["encryptedFI"]
-    base64RemoteNonce_bank = Fetch_Data_JSON["FI"][1]["KeyMaterial"]["Nonce"]
-    #base64YourNonce = Defined from the above Generating Key material step
-    #ourPrivateKey = Generated above Generating Key material step
-    remoteKeyMaterial_bank = Fetch_Data_JSON["FI"][1]["KeyMaterial"]
-
-    Decrpyt_Body["base64Data"] = base64Data_bank;
-    Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce_bank;
-    Decrpyt_Body["base64YourNonce"] = base64YourNonce;
-    Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
-    Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial_bank;
-    
-    url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
-    Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
-    Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
-
-    Base64_Data_bank = Data_Decrypt_JSON["base64Data"]
-    Decoded_Data_bank = base64.b64decode(Base64_Data_bank)  
-    Decoded_Data_Bank_JSON = json.loads(Decoded_Data_bank)  
-    
-    '''
-    Informaion sent through the content is 
-    content = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , Transation : [{naration , date , amount , nature},{naration , data , amount , nature},...] }
-    '''
-
-    Bank_info_rel = Bank(request, Decoded_Data_Bank_JSON)
-    content = Bank_info_rel
-    print("&&&&&&&&&&&&&&&&&&&&&&" ,  content)
-
-    print('\n' ,Bank_info_rel,'\n' )
-    return render(request,"DashBoard2.html",content)
 
 
+    print("\n\n\nFetch Data Json : ", Fetch_Data_JSON , "\n\n\n")
+    for elements in Fetch_Data_JSON["FI"]:
+            base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
+            print(elements["fipId"])
+            remoteKeyMaterial = elements["KeyMaterial"]
+            for data in elements["data"]:
+                base64Data = data["encryptedFI"]
+                        
+                Decrpyt_Body["base64Data"] = base64Data;
+                Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
+                Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+                Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+                Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+            
+                url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+                Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+                Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+                
+                Base64_Data = Data_Decrypt_JSON["base64Data"]
+                Decoded_Data = base64.b64decode(Base64_Data)  
+                Decoded_Data_JSON = json.loads(Decoded_Data)  
+                type = Decoded_Data_JSON["account"]["type"] 
+                
+
+                if(type == "deposit"):      
+                    '''
+                    Informaion sent through the content is 
+                    content = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , Transation : [{naration , date , amount , nature},{naration , data , amount , nature},...] }
+                    '''
+
+                    Bank_info_rel = Bank(request,  Decoded_Data_JSON)
+                    content = Bank_info_rel
+                    print("\n\n\nContent : \n" ,  content)
+
+                    print('\n' ,Bank_info_rel,'\n' )
+                    print("\n\nRendering DashBoard\n\n")
+                    return render(request,"DashBoard2.html",content)
 
 def data(request):
     user = request.user
@@ -263,11 +263,11 @@ def data(request):
     
 
     #Decrypt Data
-    base64Data = Fetch_Data_JSON["FI"][0]["data"][0]["encryptedFI"]
-    base64RemoteNonce = Fetch_Data_JSON["FI"][0]["KeyMaterial"]["Nonce"]
+    base64Data = Fetch_Data_JSON["FI"][1]["data"][2]["encryptedFI"]
+    base64RemoteNonce = Fetch_Data_JSON["FI"][1]["KeyMaterial"]["Nonce"]
     #base64YourNonce = Defined from the above Generating Key material step
     #ourPrivateKey = Generated above Generating Key material step
-    remoteKeyMaterial = Fetch_Data_JSON["FI"][0]["KeyMaterial"]
+    remoteKeyMaterial = Fetch_Data_JSON["FI"][1]["KeyMaterial"]
 
     Decrpyt_Body["base64Data"] = base64Data;
     Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
@@ -283,10 +283,139 @@ def data(request):
     Decoded_Data = base64.b64decode(Base64_Data)  
     Decoded_Data_JSON = json.loads(Decoded_Data)  
 
-    return render(request,"data.html",{"DataJson":Decoded_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][0]["fipId"]})
+    return render(request,"data.html",{"DataJson":Fetch_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][0]["fipId"]})
+
+def breakout(request):
+    user = request.user
+    loc_Consent_ID = Consent.objects.get(user = user).ConsentID
+    print('***************' , loc_Consent_ID) 
+
+    UrlSigned = base_url + "/Consent/" + loc_Consent_ID
+    Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
+    json_data = json.loads(Fetch_Signed_Consent.text)
+    signedConsent = json_data["signedConsent"]
 
 
+    # Generate Key material
+    KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
+    KeyMaterialData = requests.get(KeyMaterialURL)
+    print("****************KeyMaterialData********************    " , KeyMaterialData )
+    KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
 
+
+    #Request FI DATA
+    UrlFIdata = base_url + "/FI/request"
+    Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
+    Request_FI_Data["txnid"] = str(uuid.uuid1())
+    Request_FI_Data["Consent"]["id"] = loc_Consent_ID
+    Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
+    Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
+    # print(Request_FI_Data)
+
+    Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
+    aa_session_id = Request_FI_Data_post_json["sessionId"]
+    
+    # Fetch The data
+    Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
+    Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
+    Fetch_Data_JSON = json.loads(Fetch_Data.text)
+    
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+
+    print('\n\n\n')
+
+    Assets = []
+    Liability = []
+    Assets_Amount = 0;
+    Liability_Amount = 0; 
+    for elements in Fetch_Data_JSON["FI"]:
+        base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
+        print(elements["fipId"])
+        remoteKeyMaterial = elements["KeyMaterial"]
+        for data in elements["data"]:
+            base64Data = data["encryptedFI"]
+                       
+            Decrpyt_Body["base64Data"] = base64Data;
+            Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
+            Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+            Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+            Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+           
+            url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+            Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+            Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+            
+            Base64_Data = Data_Decrypt_JSON["base64Data"]
+            Decoded_Data = base64.b64decode(Base64_Data)  
+            Decoded_Data_JSON = json.loads(Decoded_Data)  
+            type = Decoded_Data_JSON["account"]["type"] 
+            
+            print(type)
+
+            if(type == "deposit"):       
+                a = {
+                    "type" : type,
+                    "value" : "+" + str(Decoded_Data_JSON["account"]["summary"]["currentBalance"]),
+                }
+                Assets.append(a)
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+                
+            elif(type in ["term_deposit" , "recurring_deposit" , "cd" , "idr" , "mutual_funds" , "bonds" , "debentures" , "etf" , "nps", "govt_securities" , "cp" , "reit" , "invit" , "aif" , "sip" , "equities" , "cis"]):
+                a = {
+                    "type" : type,
+                    "value" :  "+" + str(Decoded_Data_JSON["account"]["summary"]["currentValue"]),
+                 
+                }
+                Assets.append(a)
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentValue"])
+            elif(type in ["credit_card"]):
+                a = {
+                "type" : type,
+                "value" :  "-" + str(Decoded_Data_JSON["account"]["summary"]["currentDue"]),
+                }
+                Liability.append(a)
+                Liability_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentDue"])
+
+            elif(type in ["insurance_policies"]):
+            # Insurance ammount
+                a = {
+                        "type" : type,
+                        "value" : "+" + str(Decoded_Data_JSON["account"]["summary"]["coverAmount"]),
+                      
+                    }
+                Assets.append(a)
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["coverAmount"])
+            elif(type in ["ulip",]):
+                # Insurance ammount
+                a = {
+                    "type" : type,
+                    "value" : "+" + str(Decoded_Data_JSON["account"]["summary"]["sumAssured"]),
+        
+                }
+                Assets.append(a)
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["sumAssured"])
+            elif(type in ["ppf" , "epf"]):
+                a = {
+                    "type" : type,
+                    "value" :  "+" + (Decoded_Data_JSON["account"]["summary"]["currentBalance"]),
+         
+                }
+                Assets.append(a)
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+
+
+        print("--------------------------------------------")
+    print('\n\n\n')
+
+
+   
+    Networth = Assets_Amount - Liability_Amount
+    return render(request,"breakout.html",{"Assets" : Assets , "Liability" : Liability , "Assets_Amount" : Assets_Amount , "Liability_Amount" : Liability_Amount , "Networth" : Networth})
+
+# Information managment Fuctions
 def Bank(request,bank_data):
     elements = len(bank_data["account"]["transactions"]["transaction"])
     month_expense = 0
@@ -319,7 +448,6 @@ def Bank(request,bank_data):
     information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , "transaction" : transactions}
     return information_exchange
 
-
 def profile(request):
     return render(request,"profile.html")
 
@@ -327,7 +455,16 @@ def checked(request):
     print('\n' , request.GET , '\n')
     user_consent_obj = list(request.GET.values())
     user = request.user
-    b = Consent(user = user , consent_obj = user_consent_obj)
-    b.save()
+    try:
+        b = Consent(user = user , consent_obj = user_consent_obj)
+        b.save()
+    except:
+        a = Consent.objects.get(user = user)
+        a.ConsentHandle = ""
+        a.ConsentID = ""
+        a.consent_obj = user_consent_obj
+
+        a.save()
+
     print(" all values in dictionary are:",user_consent_obj)
     return redirect("/ConsentFlow")

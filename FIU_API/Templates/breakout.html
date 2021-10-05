@@ -1,0 +1,77 @@
+{% extends 'DashBoardBase.html' %}
+{% load static %}
+{% load extras %}
+
+
+
+{% block Content %}
+<h1 class="mx-3 text-center">BalanceSheet</h1>
+<hr>
+<div class="container">
+    <table class="table table-hover">
+        <h1><kbd>Assets</kbd></h1>
+        <thead>
+            <tr>
+                <th scope="col">Source</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+        {% for a in Assets %}
+        <tbody>
+            <tr>
+                <td class="text-uppercase">{{a.type}}</td>
+                <td class="text-success">&#x20B9 {{a.value}}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+
+
+    <hr>
+    <div class="container">
+        <table class="table table-hover">
+            <h1><kbd>Liabilities</kbd></h1>
+            <thead>
+                <tr>
+                    <th scope="col">Source</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            {% for a in Liability %}
+            <tbody>
+                <tr>
+                    <td class="text-uppercase">{{a.type}}</td>
+                    <td class="text-danger">&#x20B9 {{a.value}} </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+
+    <hr>
+    <div class="container">
+        <table class="table table-hover">
+            <h1><kbd>Net Worth</kbd></h1>
+            
+            <tbody>
+                <tr>
+                    <td class="text-uppercase"><h4>Assets</h4><br><h6>Minus(-)</h6></td>
+                    <td class="text-success">&#x20B9 {{Assets_Amount}}</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="text-uppercase"><h4>Assets</h4><br><h6>equals(=)</h6></td>
+                    <td class="text-success">&#x20B9 {{Liability_Amount}}</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="text-uppercase"><h4>Net Worth</h4></td>
+                    <td class="text-success">&#x20B9 {{Networth}}</td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
+    {% endblock Content %}
