@@ -6,6 +6,10 @@ class Consent(models.Model):
     ConsentHandle = models.TextField(default = "")
     ConsentID = models.TextField(default = "")
     consent_obj = models.TextField(default = "")
+    FirstTime = models.BooleanField(default=False)
+    Investments = models.FloatField(default = -1)
+    Networth = models.FloatField(default = -1)
+    Last_Updated = models.FloatField(default = 0)
 
     def __str__(self):
         return str(self.user)
