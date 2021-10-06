@@ -1,0 +1,38 @@
+{% load static %}
+{% load sass_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% sass_src 'CSS/waiting.scss' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+
+    <title>Wait</title>
+</head>
+<body>
+
+        <div class="message">
+            <h3>As this is your first time here<br>We are fetching data from your books!</h3>
+        </div>
+        <div class="bookshelf_wrapper">
+            <ul class="books_list">
+                <li class="book_item first"></li>
+                <li class="book_item second"></li>
+                <li class="book_item third"></li>
+                <li class="book_item fourth"></li>
+                <li class="book_item fifth"></li>
+                <li class="book_item sixth"></li>
+            </ul>
+            <div class="shelf"></div>
+           
+        </div>
+
+       
+
+    <script>
+        window.location.replace("ProcessingData");
+    </script>
+</body>
+</html>

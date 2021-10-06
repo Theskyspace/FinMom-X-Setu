@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Consent(models.Model):
     user = models.OneToOneField(User, null = True , on_delete = models.CASCADE , blank = True)
@@ -9,7 +10,8 @@ class Consent(models.Model):
     FirstTime = models.BooleanField(default=False)
     Investments = models.FloatField(default = -1)
     Networth = models.FloatField(default = -1)
-    Last_Updated = models.FloatField(default = 0)
+    Last_Updated = models.DateTimeField()
 
+    
     def __str__(self):
         return str(self.user)

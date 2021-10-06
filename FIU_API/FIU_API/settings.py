@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+# Alternatively if you are using Pipenv
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,10 +31,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+STATIC_ROOT = BASE_DIR / 'static'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-   
+SASS_PROCESSOR_ROOT = STATIC_ROOT
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
 
 # Application definition
@@ -43,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sass_processor',
+
     'FIU_Main',
 ]
 

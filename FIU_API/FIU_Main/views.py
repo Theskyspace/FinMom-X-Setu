@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils import timezone
 from .models import Consent
 import requests 
 import json
@@ -16,6 +17,7 @@ signedConsent = None
 
 def index(request): 
     return render(request,"Index.html")
+
 
 def SignupHandle(request):
     if request.method == 'POST':
@@ -63,6 +65,109 @@ def Handlelogout(request):
     messages.success(request, "Successfully logged out")
     return redirect('index')
 
+
+def ProcessingData(request):
+    user = request.user
+    loc_Consent_ID = Consent.objects.get(user = user).ConsentID
+    print('***************' , loc_Consent_ID) 
+    
+    # 3rd step of the postman thing
+    UrlSigned = base_url + "/Consent/" + loc_Consent_ID
+    Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
+    json_data = json.loads(Fetch_Signed_Consent.text)
+    signedConsent = json_data["signedConsent"]
+
+
+    # Generate Key material
+    KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
+    KeyMaterialData = requests.get(KeyMaterialURL)
+    print("****************KeyMaterialData********************    " , KeyMaterialData )
+    KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+
+
+    #Request FI DATA
+    UrlFIdata = base_url + "/FI/request"
+    Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
+    Request_FI_Data["txnid"] = str(uuid.uuid1())
+    Request_FI_Data["Consent"]["id"] = loc_Consent_ID
+    Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
+    Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
+    # print(Request_FI_Data)
+
+    Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
+    aa_session_id = Request_FI_Data_post_json["sessionId"]
+    
+    # Fetch The data
+    Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
+    Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
+    Fetch_Data_JSON = json.loads(Fetch_Data.text)
+    
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+
+    print('\n\n\n')
+
+    Assets_Amount = 0;
+    Liability_Amount = 0; 
+    investment = 0;
+    for elements in Fetch_Data_JSON["FI"]:
+        base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
+        print(elements["fipId"])
+        remoteKeyMaterial = elements["KeyMaterial"]
+        for data in elements["data"]:
+            base64Data = data["encryptedFI"]
+                       
+            Decrpyt_Body["base64Data"] = base64Data;
+            Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
+            Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+            Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+            Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+           
+            url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+            Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+            Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+            
+            Base64_Data = Data_Decrypt_JSON["base64Data"]
+            Decoded_Data = base64.b64decode(Base64_Data)  
+            Decoded_Data_JSON = json.loads(Decoded_Data)  
+            type = Decoded_Data_JSON["account"]["type"] 
+            
+            print(type)
+
+            if(type == "deposit"):       
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+                
+            elif(type in ["term_deposit" , "recurring_deposit" , "cd" , "idr" , "mutual_funds" , "bonds" , "debentures" , "etf" , "nps", "govt_securities" , "cp" , "reit" , "invit" , "aif" , "sip" , "equities" , "cis"]):
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentValue"])
+                investment += float(Decoded_Data_JSON["account"]["summary"]["currentValue"])
+            elif(type in ["credit_card"]):
+                Liability_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentDue"])
+
+            elif(type in ["insurance_policies"]):
+                # Insurance ammount
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["coverAmount"])
+            elif(type in ["ulip",]):
+                # Insurance ammount
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["sumAssured"])
+            elif(type in ["ppf" , "epf"]):
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+                investment += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+   
+    Networth = Assets_Amount - Liability_Amount
+    # Feeding things into the database.
+    database_instance = Consent.objects.get(user = user)
+    database_instance.Investments = investment
+    database_instance.Networth = Networth
+    database_instance.Last_Updated =  timezone.now()
+    database_instance.save()
+
+    return redirect("/DashBoard")
+
+def load(request):
+    return render(request , "Firsttime.html")
+
 @login_required(login_url = "index")
 def ConsentFlow(request):
     user = request.user
@@ -101,8 +206,7 @@ def ConsentFlow(request):
     
     local_Consent_Handle = user.consent.ConsentHandle;
 
-    
-    
+ 
     
     try:
         CheckConsentURL = base_url + "/Consent/handle/" + local_Consent_Handle;
@@ -123,8 +227,14 @@ def ConsentFlow(request):
             user = request.user
             a = Consent.objects.get(user = user)
             a.ConsentID = json_data["ConsentStatus"]["id"]
+            
+            # To check if the investments are made or not
+            if(a.Investments == -1):
+                return redirect("load")
+
             a.save()
-           
+
+            #Add here if the data of investment and networth is not available
             return redirect("DataDashBoard")
         else: 
             urlapprove = "https://anumati.setu.co/" + local_Consent_Handle;
@@ -150,6 +260,8 @@ def ConsentFlow(request):
 
 @login_required(login_url = "index")
 def DataDashBoard(request):
+    print("\n\n\nRendering Dashboard\n\n\n")
+
     user = request.user
     loc_Consent_ID = Consent.objects.get(user = user).ConsentID
     # print('***************' , loc_Consent_ID) 
@@ -219,6 +331,10 @@ def DataDashBoard(request):
 
                     Bank_info_rel = Bank(request,  Decoded_Data_JSON)
                     content = Bank_info_rel
+                    content["investments"] = Consent.objects.get(user = user).Investments
+                    content["networth"] = Consent.objects.get(user = user).Networth
+                    content["lastupdated"] = Consent.objects.get(user = user).Last_Updated
+
                     print("\n\n\nContent : \n" ,  content)
 
                     print('\n' ,Bank_info_rel,'\n' )
@@ -398,12 +514,6 @@ def breakout(request):
                 Assets.append(a)
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["sumAssured"])
             elif(type in ["ppf" , "epf"]):
-                a = {
-                    "type" : type,
-                    "value" :  "+" + (Decoded_Data_JSON["account"]["summary"]["currentBalance"]),
-         
-                }
-                Assets.append(a)
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
 
 
@@ -463,7 +573,6 @@ def checked(request):
         a.ConsentHandle = ""
         a.ConsentID = ""
         a.consent_obj = user_consent_obj
-
         a.save()
 
     print(" all values in dictionary are:",user_consent_obj)
