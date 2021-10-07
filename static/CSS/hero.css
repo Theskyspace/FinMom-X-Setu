@@ -63,10 +63,13 @@ img{
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
-
-    font-size: 1.2rem;
-    font-weight: 400;
     
+    font-size: 1.2rem;
+}
+
+.page2 .row p{
+    font-family: 'Noto Sans Display', sans-serif;
+    font-weight: 300;
 }
 
 .page3{
@@ -78,7 +81,6 @@ img{
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
-
     font-size: 1.2rem;
     font-weight: 400;
     
@@ -93,4 +95,10 @@ img{
     transform: translateX(-50%);
     overflow: hidden;
     border-radius: 50%;
+}
+
+.testimonial p{
+    opacity: 0.9;
+    font-family: 'Noto Sans Display', sans-serif;
+    font-weight: 300;
 }
