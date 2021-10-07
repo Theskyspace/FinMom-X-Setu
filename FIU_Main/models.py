@@ -10,7 +10,7 @@ class Consent(models.Model):
     FirstTime = models.BooleanField(default=False)
     Investments = models.FloatField(default = -1)
     Networth = models.FloatField(default = -1)
-    Last_Updated = models.DateField()
+    Last_Updated = models.DateTimeField()
 
     
     def __str__(self):
