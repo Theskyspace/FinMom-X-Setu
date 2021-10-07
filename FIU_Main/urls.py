@@ -15,5 +15,7 @@ urlpatterns = [
     path('consent_obj', views.checked, name='consent_obj'),
     path('Break', views.breakout, name='breakout'),
     path('ProcessingData', views.ProcessingData, name='ProcessingData'),
-    path('load' , views.load , name = "load")
+    path('load' , views.load , name = "load"),
+    path('Passbook' , views.Passbook , name = "Passbook"),
+    path('goals' , views.goals , name = "goals"),
 ]

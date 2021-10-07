@@ -1,0 +1,96 @@
+html,body{
+    height: 100%;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+}
+/* 11101D */
+
+
+.btn-custom{
+    background-color: #7a00ff;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.btn-custom-outline{
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    color: #4d019e;
+    border: 2px solid #7a00ff;
+}
+
+
+.text-custom{
+    font-weight: 500;
+    font-size: 2rem;
+    width: 60%;
+}
+
+.changing-text{
+    font-weight: 700;
+}
+
+.content{
+    position: relative;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%,-50%);
+}
+
+img{
+    width: 50vw;
+}
+
+
+.page2{
+    height: 80vh;
+    width: 100vw;
+    background-color: rgb(248, 248, 250);
+   
+}
+
+.page2 h3{
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.page2 p{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+
+    font-size: 1.2rem;
+    font-weight: 400;
+    
+}
+
+.page3{
+    padding: 5rem;
+}
+
+.page3 p{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+
+    font-size: 1.2rem;
+    font-weight: 400;
+    
+}
+
+.devimage{
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    border-radius: 50%;
+}

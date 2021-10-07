@@ -18,7 +18,6 @@ signedConsent = None
 def index(request): 
     return render(request,"Index.html")
 
-
 def SignupHandle(request):
     if request.method == 'POST':
         # get the post parameters
@@ -64,7 +63,6 @@ def Handlelogout(request):
     logout(request)
     messages.success(request, "Successfully logged out")
     return redirect('index')
-
 
 def ProcessingData(request):
     user = request.user
@@ -165,6 +163,7 @@ def ProcessingData(request):
 
     return redirect("/DashBoard")
 
+# Loading screen view
 def load(request):
     return render(request , "Firsttime.html")
 
@@ -258,6 +257,7 @@ def ConsentFlow(request):
 
     return HttpResponse("<h1>This is the consent page</h1>")
 
+# Dashboard view 
 @login_required(login_url = "index")
 def DataDashBoard(request):
     print("\n\n\nRendering Dashboard\n\n\n")
@@ -329,7 +329,7 @@ def DataDashBoard(request):
                     content = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , Transation : [{naration , date , amount , nature},{naration , data , amount , nature},...] }
                     '''
 
-                    Bank_info_rel = Bank(request,  Decoded_Data_JSON)
+                    Bank_info_rel = Bank(request,  Decoded_Data_JSON , 4 , "dashboard")
                     content = Bank_info_rel
                     content["investments"] = Consent.objects.get(user = user).Investments
                     content["networth"] = Consent.objects.get(user = user).Networth
@@ -341,6 +341,85 @@ def DataDashBoard(request):
                     print("\n\nRendering DashBoard\n\n")
                     return render(request,"DashBoard2.html",content)
 
+# Passbook
+@login_required(login_url = "index")
+def Passbook(request):
+    user = request.user
+    loc_Consent_ID = Consent.objects.get(user = user).ConsentID
+    # print('***************' , loc_Consent_ID) 
+
+    UrlSigned = base_url + "/Consent/" + loc_Consent_ID
+    Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
+    json_data = json.loads(Fetch_Signed_Consent.text)
+    signedConsent = json_data["signedConsent"]
+
+    # Generate Key material
+    KeyMaterialURL = setu_rahasya_url + "/ecc/v1/generateKey"
+    KeyMaterialData = requests.get(KeyMaterialURL)
+
+    print("**************\n\n\n" , KeyMaterialData.text)
+    KeyMaterialData_JSON = json.loads(KeyMaterialData.text)
+    base64YourNonce = KeyMaterialData_JSON["KeyMaterial"]["Nonce"]
+    ourPrivateKey = KeyMaterialData_JSON["privateKey"]
+
+
+    #Request FI DATA
+    UrlFIdata = base_url + "/FI/request"
+    Request_FI_Data["KeyMaterial"] = KeyMaterialData_JSON["KeyMaterial"]
+    Request_FI_Data["txnid"] = str(uuid.uuid1())
+    Request_FI_Data["Consent"]["id"] = loc_Consent_ID
+    Request_FI_Data["Consent"]["digitalSignature"] = signedConsent.split(".")[2]
+    Request_FI_Data_post = requests.post(UrlFIdata, headers = headers , json = Request_FI_Data)
+    print("************",Request_FI_Data_post.text)
+
+    Request_FI_Data_post_json = json.loads(Request_FI_Data_post.text)
+    aa_session_id = Request_FI_Data_post_json["sessionId"]
+    
+    # Fetch The data
+    Fetch_Data_URL = base_url + "/FI/fetch/" + aa_session_id
+    Fetch_Data = requests.get(Fetch_Data_URL , headers = headers)
+    Fetch_Data_JSON = json.loads(Fetch_Data.text)
+
+
+    print("\n\n\nFetch Data Json : ", Fetch_Data_JSON , "\n\n\n")
+    for elements in Fetch_Data_JSON["FI"]:
+            base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
+            print(elements["fipId"])
+            remoteKeyMaterial = elements["KeyMaterial"]
+            for data in elements["data"]:
+                base64Data = data["encryptedFI"]
+                        
+                Decrpyt_Body["base64Data"] = base64Data;
+                Decrpyt_Body["base64RemoteNonce"] = base64RemoteNonce;
+                Decrpyt_Body["base64YourNonce"] = base64YourNonce;
+                Decrpyt_Body["ourPrivateKey"] = ourPrivateKey;
+                Decrpyt_Body["remoteKeyMaterial"] = remoteKeyMaterial;
+            
+                url_Decrypt = setu_rahasya_url + "/ecc/v1/decrypt"
+                Data_Decrypt = requests.post(url_Decrypt,headers = headers , json = Decrpyt_Body)
+                Data_Decrypt_JSON = json.loads(Data_Decrypt.text)
+                
+                Base64_Data = Data_Decrypt_JSON["base64Data"]
+                Decoded_Data = base64.b64decode(Base64_Data)  
+                Decoded_Data_JSON = json.loads(Decoded_Data)  
+                type = Decoded_Data_JSON["account"]["type"] 
+                
+
+                if(type == "deposit"):      
+                    '''
+                    Informaion sent through the content is 
+                    content = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , Transation : [{naration , date , amount , nature},{naration , data , amount , nature},...] }
+                    '''
+
+                    Bank_info_rel = Bank(request,  Decoded_Data_JSON , 30 , "Passbook")
+                    content = Bank_info_rel
+
+                    print("\n\n\nContent : \n" ,  content)
+
+                    return render(request , "Passbook.html" , content)
+
+# This is a testing fuction for the data fuctionality
+@login_required(login_url = "index")
 def data(request):
     user = request.user
     loc_Consent_ID = Consent.objects.get(user = user).ConsentID
@@ -401,6 +480,8 @@ def data(request):
 
     return render(request,"data.html",{"DataJson":Fetch_Data_JSON , "Heading" : Fetch_Data_JSON["FI"][0]["fipId"]})
 
+# Networth breakdown fuction
+@login_required(login_url = "index")
 def breakout(request):
     user = request.user
     loc_Consent_ID = Consent.objects.get(user = user).ConsentID
@@ -526,7 +607,8 @@ def breakout(request):
     return render(request,"breakout.html",{"Assets" : Assets , "Liability" : Liability , "Assets_Amount" : Assets_Amount , "Liability_Amount" : Liability_Amount , "Networth" : Networth})
 
 # Information managment Fuctions
-def Bank(request,bank_data):
+@login_required(login_url = "index")
+def Bank(request,bank_data,range_no , purpose):
     elements = len(bank_data["account"]["transactions"]["transaction"])
     month_expense = 0
     currentBalance = bank_data["account"]["summary"]["currentBalance"]
@@ -534,18 +616,27 @@ def Bank(request,bank_data):
     cnt = 0
     transactions = []
     
-    for i in range(elements-1 , 0 , -1):
+    for i in range(elements-1 , -1 , -1):
         month = int(bank_data["account"]["transactions"]["transaction"][i]["valueDate"].split('-')[1])
         if(currentmonth == 13):
             currentmonth = month
         
-        if(currentmonth != month):
+        if(currentmonth != month and purpose != "Passbook"):
             break
         #Add the transation details to the screen to make user understand the recent passbook history.
         
-        if(cnt < 4):
-            a = [(bank_data["account"]["transactions"]["transaction"][i]["narration"]) , bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , bank_data["account"]["transactions"]["transaction"][i]["amount"]]
+        if(cnt <= range_no):
+            if(type == "DEBIT"):
+                amount = "-" + u"\u20B9 " + bank_data["account"]["transactions"]["transaction"][i]["amount"]
+            else:
+                amount = "+" + u"\u20B9 " + bank_data["account"]["transactions"]["transaction"][i]["amount"]
+
+            if(purpose ==  "Passbook"):
+                a = [(bank_data["account"]["transactions"]["transaction"][i]["mode"]),(bank_data["account"]["transactions"]["transaction"][i]["narration"]), bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , amount]
+            else:
+                a = [(bank_data["account"]["transactions"]["transaction"][i]["narration"]) , bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , amount]
             print("\n A data \n" , a , '\n')
+            print("\n\nAmount of transation\n\n" , len(bank_data["account"]["transactions"]["transaction"]) , "\n\n\n")
             transactions.append(a)
             cnt += 1
 
@@ -553,14 +644,19 @@ def Bank(request,bank_data):
             spending = float(bank_data["account"]["transactions"]["transaction"][i]["amount"])
             month_expense += spending
             
-         
+    
     
     information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , "transaction" : transactions}
     return information_exchange
 
+@login_required(login_url = "index")
 def profile(request):
     return render(request,"profile.html")
 
+def goals(request):
+    return render(request,"goals.html")
+
+@login_required(login_url = "index")
 def checked(request):
     print('\n' , request.GET , '\n')
     user_consent_obj = list(request.GET.values())

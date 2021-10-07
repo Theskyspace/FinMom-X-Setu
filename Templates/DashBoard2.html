@@ -33,7 +33,7 @@
         <span class="tooltip">Dashboard</span>
       </li>
       <li>
-        <a href="#">
+        <a href="/Passbook">
           <i class='bx bx-book-open'></i>
           <span class="links_name">Passbook</span>
         </a>
@@ -116,13 +116,12 @@
              
               <tr style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
                 {% for a in elements%}
-                  <td><span class="d-inline-block text-truncate" style="max-width: 150px;">{{a}}</span></td>
+                  <td><p style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20ch;">{{a}}</p></td>
                 {% endfor %}
                 <!-- <td><i class='bx bx-plus-medical'></i> Peter</td>
                 <td>Griffin</td>
                 <td>$100</td> -->
               </tr>
-              <tr>
             {% endfor %}
           </table>
         </div>

@@ -1,0 +1,254 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+  <!-- Google Fonts  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+  {% block style %}{% endblock style %}
+
+  <link rel="stylesheet" href="{% static 'CSS/hero.css' %}">
+  <title>FINMOM</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg custom-nav">
+
+    <div class="container">
+      <a class="navbar-brand mx-3 h1 text-black" style="font-size: xx-large;" href="#">FIN<span
+          style="font-size: xxx-large; font-family: 'Cookie', cursive;">mom</span></a>
+      <!-- Small screen sizes -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Sign up modal -->
+      <!-- Button trigger modal -->
+      <div class="float-end">
+        <button type="button" class="btn btn-custom me-4" data-bs-toggle="modal" data-bs-target="#signup">
+          Create Account
+        </button>
+        <!-- Sign in modal -->
+        <button type="button" class="btn btn-custom-outline" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Sign in
+        </button>
+      </div>
+
+
+    </div>
+  </nav>
+
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show container-fluid"
+    style="position: fixed;z-index: 1000000;" role="alert">
+    <strong>Message : </strong> {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+
+
+  <div class="container container-content">
+    <div class="row">
+      <div class="col" style="width: 50vw;height: 80vh;">
+        <div class="content">
+          <h1 class="text-left text-custom">Simple and smart way to start tracking</h1>
+          <h1 class="changing-text mt-2"><span id="text"></span> &#x200B</h1>
+          <button class="btn btn-custom mt-3" data-bs-toggle="modal" data-bs-target="#signup"
+            style="width: 60%; font-size: 1.5rem; font-weight: 400;">Start Budgeting</button>
+        </div>
+      </div>
+      <div class="col">
+        <img src="{% static 'img/hero.jpg' %}" alt="image">
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container-fluid page2">
+    <div class="container">
+      <h3 class="text-center mt-5 pt-5">One platform. Multiple accounts tracking.</h3>
+      <p class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur excepturi ullam
+        cupiditate expedita quisquam, atque quibusdam maiores hic natus autem repellat facere, iusto error, quam
+        reiciendis dolores fuga commodi nulla?</p>
+    </div>
+  </div>
+
+  <div class="container-fluid mb-5  container-content page3">
+    <h3 class="text-center mt-5  ">It’s for everyone.</h3>
+    <p class="text-center mt-3">We are committed to make investments easy and accessible to everyone.</p>
+    <div class="container mt-4" style="width: 50vw;">
+      <div class="row">
+        <div class="col">
+          <img class="img-fluid" src="{% static 'img/image1.jpg' %}" alt="">
+        </div>
+        <div class="col">
+          <img class="img-fluid" src="{% static 'img/image2.jpg' %}" alt="">
+        </div>
+        <div class="col">
+          <img class="img-fluid" src="{% static 'img/image3.jpg' %}" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+    
+
+    
+  <div class="container-fluid page2">
+    <div class="container">
+      <h3 class="text-center mt-5 mb-5 pt-5">About the Developer</h3>
+      <div class="row">
+        <div class="col">
+          <img class="img-fluid devimage" src="{% static 'img/devimage.jpeg' %}" alt="">
+        </div>
+        <div class="col">
+         <p class="text-left">Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis nostrum harum, unde maiores repellendus facere sed! Harum enim minus reiciendis repudiandae corporis voluptates, iusto consequatur, eos inventore eveniet ad ipsum.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  </div>
+
+
+
+  
+
+
+
+  <!-- Signup Modal -->
+  <div class="modal fade" id="signup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Sign Up Here</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/signup" method='POST'>
+            <div class="mb-3">
+              <label class="form-label">Phn No.</label>
+              <input type="tel" pattern="[7-9]{1}[0-9]{9}" class="form-control" id="phnno" name="phnno" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" id="fname" name="fname" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lname" name="lname" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputPassword1" id="pass1s" class="form-label">Password</label>
+              <input type="password" class="form-control" id="pass1" name="pass1" required>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword2" id="pass2s" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="pass2" name="pass2" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            {% csrf_token %}
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Sign in Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/login" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Mobile no</label>
+              <input type="tel" pattern="[7-9]{1}[0-9]{9}" class="form-control" id="loginphnno" name="loginphnno"
+                required>
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginpass1" name="loginpass1">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            {% csrf_token %}
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    consoleText(['Bank', 'Investments', 'FD', 'Insurance', 'Funds', "Financial Goals"], 'text', ['tomato', 'rebeccapurple', 'lightblue']);
+    function consoleText(words, id, colors) {
+      if (colors === undefined) colors = ['#fff'];
+      var visible = true;
+      var con = document.getElementById('console');
+      var letterCount = 1;
+      var x = 1;
+      var waiting = false;
+      var target = document.getElementById(id)
+      target.setAttribute('style', 'color:' + colors[0])
+      window.setInterval(function () {
+
+        if (letterCount === 0 && waiting === false) {
+          waiting = true;
+          target.innerHTML = words[0].substring(0, letterCount)
+          window.setTimeout(function () {
+            var usedColor = colors.shift();
+            colors.push(usedColor);
+            var usedWord = words.shift();
+            words.push(usedWord);
+            x = 1;
+            target.setAttribute('style', 'color:' + colors[0])
+            letterCount += x;
+            waiting = false;
+          }, 1000)
+        } else if (letterCount === words[0].length + 1 && waiting === false) {
+          waiting = true;
+          window.setTimeout(function () {
+            x = -1;
+            letterCount += x;
+            waiting = false;
+          }, 1000)
+        } else if (waiting === false) {
+          target.innerHTML = words[0].substring(0, letterCount)
+          letterCount += x;
+        }
+      }, 50)
+
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

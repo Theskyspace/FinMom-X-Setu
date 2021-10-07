@@ -1,0 +1,178 @@
+{% extends 'DashBoardBase.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'CSS/Goals.css' %}">
+{% endblock style %}
+
+
+{% block Content %}
+<div class="container" style="padding-top: 5rem;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Fun Money Alocation</h5>
+
+                        <div class="container">
+                            <form class="range">
+                                <div class="form-group range__slider">
+                                    <input type="range" step="1">
+                                </div>
+                                <!--/form-group-->
+                                <div class="form-group range__value">
+                                    <label>percentage</label>
+                                    <span></span>
+                                </div>
+                                <!--/form-group-->
+                            </form>
+                        </div>
+                        <!--/container-->
+                        <a href="#" class="btn btn-dark">Save</a>
+                    </div>
+                </div>
+                <h1 style="padding-top: 3rem;">Goals</h1>
+                <hr>
+            </div>
+
+            <div class="col d-flex justify-content-center">
+                <img src="{% static 'img/Goals.jpg' %}" alt="" style="height: 20rem; top: 50%;">
+            </div>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col">
+            <div class="card" style="width: 20rem;">
+                <canvas id="myChart"></canvas>
+                <div class="card-body">
+                    <h5 class="card-title">Buy a New bike</h5>
+                    <p class="card-text">Required Capital : 1 lac<br>Target : 4 months</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 20rem;">
+                <canvas id="myChart1"></canvas>
+                <div class="card-body">
+                    <h5 class="card-title">Buy a new House</h5>
+                    <p class="card-text">Required Capital : 1 Cr<br>Target : 12 months</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+<script>
+    const data = {
+        labels: [
+            'Saved',
+            'left'
+        ],
+        datasets: [{
+            label: 'My First Dataset',
+            data: [100, 20],
+            backgroundColor: [
+                'rgb(122,0,255)',
+                'rgb(10, 252, 199)'
+            ],
+            hoverOffset: 4
+        }]
+    };
+    const data2 = {
+        labels: [
+            'Saved',
+            'left'
+        ],
+        datasets: [{
+            label: 'My First Dataset',
+            data: [50, 50],
+            backgroundColor: [
+                'rgb(122,0,255)',
+                'rgb(10, 252, 199)'
+            ],
+            hoverOffset: 4
+        }]
+    };
+
+    const config = {
+        type: 'doughnut',
+        data: data,
+    };
+
+    const config2 = {
+        type: 'doughnut',
+        data: data2,
+    };
+
+    var myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+    var myChart1 = new Chart(
+        document.getElementById('myChart1'),
+        config2
+    );
+
+
+
+
+    class Slider {
+        constructor(rangeElement, valueElement, options) {
+            this.rangeElement = rangeElement
+            this.valueElement = valueElement
+            this.options = options
+
+            // Attach a listener to "change" event
+            this.rangeElement.addEventListener('input', this.updateSlider.bind(this))
+        }
+
+        // Initialize the slider
+        init() {
+            this.rangeElement.setAttribute('min', options.min)
+            this.rangeElement.setAttribute('max', options.max)
+            this.rangeElement.value = options.cur
+
+            this.updateSlider()
+        }
+
+        // Format the money
+        asMoney(value) {
+            return  parseFloat(value)
+                .toLocaleString('en-US', { maximumFractionDigits: 2 }) + "%"
+        }
+
+        generateBackground(rangeElement) {
+            if (this.rangeElement.value === this.options.min) {
+                return
+            }
+
+            let percentage = (this.rangeElement.value - this.options.min) / (this.options.max - this.options.min) * 100
+            return 'background: linear-gradient(to right, #50299c, #7a00ff ' + percentage + '%, #d3edff ' + percentage + '%, #dee1e2 100%)'
+        }
+
+        updateSlider(newValue) {
+            this.valueElement.innerHTML = this.asMoney(this.rangeElement.value)
+            this.rangeElement.style = this.generateBackground(this.rangeElement.value)
+        }
+    }
+
+    let rangeElement = document.querySelector('.range [type="range"]')
+    let valueElement = document.querySelector('.range .range__value span')
+
+    let options = {
+        min: 0,
+        max: 100,
+        cur: 30
+    }
+
+    if (rangeElement) {
+        let slider = new Slider(rangeElement, valueElement, options)
+
+        slider.init()
+    }
+
+</script>
+{% endblock Content %}
