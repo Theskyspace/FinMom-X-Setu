@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-b=^xwfw&y63c(g3j#l5-tno2z0&il*12&qq2pga!2&q*m0m0%d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1',"finmom.herokuapp.com"]
 
 STATIC_ROOT = BASE_DIR / 'static'
 
