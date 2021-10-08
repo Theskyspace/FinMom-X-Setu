@@ -1,181 +1,305 @@
-{% extends "DashBoardBase.html" %}
+{% extends 'DashBoardBase.html' %}
 {% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'CSS/Goals.css' %}">
+{% endblock style %}
+
 
 
 {% block Content %}
 <div class="container" style="padding-top: 100px;">
-    <form action="consent_obj" method="get" name="form">
-        <h4>Bank</h4>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="DEPOSIT" name="Deposit" id="flexCheckChecked" checked>
-          <label class="form-check-label" for="flexCheckChecked">
-            Deposits
-          </label>
-        </div>
+  <form action="consent_obj" method="get" name="form">
 
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="TERM_DEPOSIT" name="TERM_DEPOSIT" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">
-            Term deposits
-          </label>
-        </div>
+    <h4>Bank</h4>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="DEPOSIT" name="Deposit" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Deposits
+      </label>
+    </div>
 
-        
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="RECURRING_DEPOSIT" name="RECURRING_DEPOSIT" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-             Recurring deposits
-            </label>
-          </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="TERM_DEPOSIT" name="TERM_DEPOSIT" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Term deposits
+      </label>
+    </div>
+
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="RECURRING_DEPOSIT" name="RECURRING_DEPOSIT"
+        id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Recurring deposits
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="CREDIT_CARD" name="CREDIT_CARD" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Credit Card
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="CD" name="CD" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Certificates of Deposit
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="IDR" name="IDR" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Indian Depository Receipts
+      </label>
+    </div>
+    <hr>
+    <h4>Insurance</h4>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="INSURANCE_POLICIES" name="INSURANCE_POLICIES"
+        id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Insurance Policies
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="ULIP" name="ULIP" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Unit Linked Insurance Plan
+      </label>
+    </div>
+
+    <hr>
+    <h4>Pension</h4>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="EPF" name="EPF" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Employee Provident Fund
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="PPF" name="PPF" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Public Provident Fund
+      </label>
+    </div>
+
+    <hr>
+    <h4>Investments</h4>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="MUTUAL_FUNDS" name="MUTUAL_FUNDS" id="flexCheckChecked"
+        checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Mutual Funds
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="BONDS" name="BONDS" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Bonds
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="DEBENTURES" name="DEBENTURES" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Debentures
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="ETF" name="ETF" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Exchange Traded Funds
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="NPS" name="NPS" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        National Pension System
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="GOVT_SECURITIES" name="GOVT_SECURITIES"
+        id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Government Securities
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="CP" name="CP" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Commercial Paper
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="REIT" name="REIT" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Real Estate Investment Trusts
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="INVIT" name="INVIT" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Infrastructure Investment Trusts
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="AIF" name="AIF" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Alternative Investment Funds
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="SIP" name="SIP" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Systematic Investment Plan
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="EQUITIES" name="EQUITIES" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Equity Shares
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="CIS" name="CIS" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+        Collective Investment Schemes
+      </label>
+    </div>
+
+    <hr>
+    <h1>Other Questions</h1>
+    <p>These question's intent better user experiance</p>
+
+    <div class="form-check">
+      <label class="form-check-label" for="flexCheckDefault">
+        How much do you earn in a month?
+      </label>
+
+      <div class="input-group mb-3">
+        <span class="input-group-text">&#x20B9</span>
+        <input type="number" id="money" name="Salary" value="" class="form-control">
+      </div>
+
+    </div>
   
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="CREDIT_CARD" name="CREDIT_CARD" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-            Credit Card
-            </label>
-          </div>
+    <div class="form-check">
+      <label class="form-check-label" for="flexCheckDefault">
+        Loan amount?
+      </label>
 
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="CD" name="CD" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-                Certificates of Deposit
-            </label>
-          </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">&#x20B9</span>
+        <input type="number" id="money" name="loan" value="" class="form-control">
+      </div>
+
+    </div>
   
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="IDR" name="IDR" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-            Indian Depository Receipts
-            </label>
-          </div>
-          <hr>
-          <h4>Insurance</h4>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="INSURANCE_POLICIES" name="INSURANCE_POLICIES" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-                Insurance Policies
-            </label>
-          </div>
+    <br>
   
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="ULIP" name="ULIP" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-            Unit Linked Insurance Plan
-            </label>
-          </div>
+    <label class="form-check-label" for="flexCheckDefault">
+      Fun Money Allocation
+    </label>
+    <div class="form-group range__slider mt-3">
+      <input type="range" name="fun_money" step="1">
+    </div>
 
-          <hr>
-          <h4>Pension</h4>
+    <!--form-group-->
+    <div class="form-group range__value">
+      <label>Fun Money</label>
+      <span></span>
+    </div>
+    <!--form-group-->
 
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="EPF" name="EPF" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-            Employee Provident Fund
-            </label>
-          </div>
-  
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="PPF" name="PPF" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Public Provident Fund
-            </label>
-          </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
 
-          <hr>
-          <h4>Investments</h4>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="MUTUAL_FUNDS" name="MUTUAL_FUNDS" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-            Mutual Funds
-            </label>
-          </div>
-  
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="BONDS" name="BONDS" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-            Bonds
-            </label>
-          </div>
-          
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="DEBENTURES" name="DEBENTURES" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Debentures 
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="ETF" name="ETF" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Exchange Traded Funds 
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="NPS" name="NPS" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                National Pension System
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="GOVT_SECURITIES" name="GOVT_SECURITIES" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Government Securities
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="CP" name="CP" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Commercial Paper
-            </label>
-          </div>
-        
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="REIT" name="REIT" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Real Estate Investment Trusts
-            </label>
-          </div>
-          
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="INVIT" name="INVIT" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Infrastructure Investment Trusts
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="AIF" name="AIF" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Alternative Investment Funds 
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="SIP" name="SIP" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Systematic Investment Plan
-            </label>
-          </div>
-          
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="EQUITIES" name="EQUITIES" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Equity Shares 
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="CIS" name="CIS" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Collective Investment Schemes
-            </label>
-          </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+
+
+
+
+<script>
+class Slider {
+    constructor(rangeElement, valueElement, options) {
+        this.rangeElement = rangeElement
+        this.valueElement = valueElement
+        this.options = options
+
+        // Attach a listener to "change" event
+        this.rangeElement.addEventListener('input', this.updateSlider.bind(this))
+    }
+
+    
+    // Initialize the slider
+    init() {
+        this.rangeElement.setAttribute('min', options.min)
+        this.rangeElement.setAttribute('max', options.max)
+        this.rangeElement.value = options.cur
+
+        this.updateSlider()
+    }
+
+    // Format the money
+    asMoney(value) {
+        return  parseFloat(value)
+            .toLocaleString('en-US', { maximumFractionDigits: 2 }) + "%"
+    }
+
+    generateBackground(rangeElement) {
+        if (this.rangeElement.value === this.options.min) {
+            return
+        }
+
+        let percentage = (this.rangeElement.value - this.options.min) / (this.options.max - this.options.min) * 100
+        return 'background: linear-gradient(to right, #50299c, #7a00ff ' + percentage + '%, #d3edff ' + percentage + '%, #dee1e2 100%)'
+    }
+
+    updateSlider(newValue) {
+        this.valueElement.innerHTML = this.asMoney(this.rangeElement.value)
+        this.rangeElement.style = this.generateBackground(this.rangeElement.value)
+    }
+}
+
+
+let rangeElement = document.querySelector('.container [type="range"]')
+let valueElement = document.querySelector('.container .range__value span')
+// document.getElementById('money').value 
+console.log(rangeElement)
+console.log(valueElement)
+
+let options = {
+    min: 0,
+    max: 100,
+    cur: 30
+}
+
+if (rangeElement) {
+    let slider = new Slider(rangeElement, valueElement, options)
+
+    slider.init()
+}
+
+</script>
+
 {% endblock Content %}
+

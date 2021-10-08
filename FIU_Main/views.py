@@ -154,11 +154,11 @@ def ProcessingData(request):
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
                 investment += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
    
-    Networth = Assets_Amount - Liability_Amount
     # Feeding things into the database.
     database_instance = Consent.objects.get(user = user)
+    Networth = Assets_Amount - Liability_Amount - database_instance.Loan
     database_instance.Investments = investment
-    database_instance.Networth = Networth
+    database_instance.Networth = Networth 
     # database_instance.Last_Updated =  timezone.now()
     database_instance.save()
 
@@ -236,7 +236,7 @@ def ConsentFlow(request):
 
             #Add here if the data of investment and networth is not available
             return redirect("DataDashBoard")
-        else: 
+        elif(json_data["ConsentStatus"]["status"] == "PENDING"): 
             urlapprove = "https://anumati.setu.co/" + local_Consent_Handle;
             context = {
                 'message': 'Your Consent is pending Kindly make the Approval and then click on done',
@@ -248,10 +248,12 @@ def ConsentFlow(request):
 
     except Exception as e:
         print("\n\nConsent Flow 2st Try\n" , e , "\n\n\n")
+        urlapprove = "https://anumati.setu.co/" + local_Consent_Handle;
 
         context = {
                 'message': 'Please make the Consent to do Go further',
                 'img': 'none.jpg',
+                'urlapprove' : urlapprove,
                
         }
         return render(request,"ConsentFlow.html",context)
@@ -332,8 +334,8 @@ def DataDashBoard(request):
 
                     Bank_info_rel = Bank(request,  Decoded_Data_JSON , 4 , "dashboard")
                     content = Bank_info_rel
-                    content["investments"] = Consent.objects.get(user = user).Investments
-                    content["networth"] = Consent.objects.get(user = user).Networth
+                    content["investments"] = "{:,}".format(Consent.objects.get(user = user).Investments)
+                    content["networth"] = "{:,}".format(Consent.objects.get(user = user).Networth)
                     # content["lastupdated"] = Consent.objects.get(user = user).Last_Updated
 
                     print("\n\n\nContent : \n" ,  content)
@@ -527,8 +529,10 @@ def breakout(request):
 
     Assets = []
     Liability = []
+    Liability.append({"type":"Loan" , "value" : "-" + str(Consent.objects.get(user = user).Loan)})
     Assets_Amount = 0;
-    Liability_Amount = 0; 
+    Liability_Amount = 0;
+    Liability_Amount += Consent.objects.get(user = user).Loan
     for elements in Fetch_Data_JSON["FI"]:
         base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
         print(elements["fipId"])
@@ -551,7 +555,7 @@ def breakout(request):
             Decoded_Data_JSON = json.loads(Decoded_Data)  
             type = Decoded_Data_JSON["account"]["type"] 
             
-            print(type)
+            print("here is the type : " + type)
 
             if(type == "deposit"):       
                 a = {
@@ -570,6 +574,7 @@ def breakout(request):
                 Assets.append(a)
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentValue"])
             elif(type in ["credit_card"]):
+                print("kjbasdjkbaskdbkabdjkb Crid ")
                 a = {
                 "type" : type,
                 "value" :  "-" + str(Decoded_Data_JSON["account"]["summary"]["currentDue"]),
@@ -596,6 +601,11 @@ def breakout(request):
                 Assets.append(a)
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["sumAssured"])
             elif(type in ["ppf" , "epf"]):
+                a = {
+                    "type" : type,
+                    "value" : "+" + str(Decoded_Data_JSON["account"]["summary"]["currentBalance"]),
+        
+                }
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
 
 
@@ -630,7 +640,7 @@ def Bank(request,bank_data,range_no , purpose):
             if(type == "DEBIT"):
                 amount = "-" + u"\u20B9 " + bank_data["account"]["transactions"]["transaction"][i]["amount"]
             else:
-                amount = "+" + u"\u20B9 " + bank_data["account"]["transactions"]["transaction"][i]["amount"]
+                amount = " + " + u"\u20B9 " + bank_data["account"]["transactions"]["transaction"][i]["amount"]
 
             if(purpose ==  "Passbook"):
                 a = [(bank_data["account"]["transactions"]["transaction"][i]["mode"]),(bank_data["account"]["transactions"]["transaction"][i]["narration"]), bank_data["account"]["transactions"]["transaction"][i]["valueDate"] , amount]
@@ -644,10 +654,12 @@ def Bank(request,bank_data,range_no , purpose):
         if(bank_data["account"]["transactions"]["transaction"][i]["type"] == "DEBIT"):
             spending = float(bank_data["account"]["transactions"]["transaction"][i]["amount"])
             month_expense += spending
-            
+        user = request.user
+        funmoney = (Consent.objects.get(user = user).funMoneyAllocation)*(Consent.objects.get(user = user).Monthly_Income)/100 - month_expense
+        
     
     
-    information_exchange = {"month_expense" : "{:,}".format(month_expense), "balance" : currentBalance , "transaction" : transactions}
+    information_exchange = {"month_expense" : "{:,}".format(funmoney), "balance" : currentBalance , "transaction" : transactions}
     return information_exchange
 
 @login_required(login_url = "index")
@@ -660,7 +672,9 @@ def goals(request):
 @login_required(login_url = "index")
 def checked(request):
     print('\n' , request.GET , '\n')
+    print('\n\n',request.GET.get("loan"))
     user_consent_obj = list(request.GET.values())
+    user_consent_obj = user_consent_obj[:-3]
     user = request.user
     try:
         b = Consent(user = user , consent_obj = user_consent_obj)
@@ -670,7 +684,10 @@ def checked(request):
         a.ConsentHandle = ""
         a.ConsentID = ""
         a.consent_obj = user_consent_obj
+        a.Loan = float(request.GET.get("loan"))
+        a.Monthly_Income = float(request.GET.get("Salary"))
+        a.funMoneyAllocation = float(request.GET.get("fun_money"))
         a.save()
 
-    print(" all values in dictionary are:",user_consent_obj)
+    print("\n\nall values in dictionary are:",user_consent_obj)
     return redirect("/ConsentFlow")

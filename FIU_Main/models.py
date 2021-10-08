@@ -10,6 +10,9 @@ class Consent(models.Model):
     FirstTime = models.BooleanField(default=False)
     Investments = models.FloatField(default = -1)
     Networth = models.FloatField(default = -1)
+    Monthly_Income = models.FloatField(default = -1)
+    Loan = models.FloatField(default = -1)
+    funMoneyAllocation = models.FloatField(default = -1)
     # Last_Updated = models.DateTimeField()
 
     
