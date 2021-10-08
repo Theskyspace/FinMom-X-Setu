@@ -158,7 +158,7 @@ def ProcessingData(request):
     database_instance = Consent.objects.get(user = user)
     database_instance.Investments = investment
     database_instance.Networth = Networth
-    database_instance.Last_Updated =  timezone.now()
+    # database_instance.Last_Updated =  timezone.now()
     database_instance.save()
 
     return redirect("/DashBoard")
@@ -333,7 +333,7 @@ def DataDashBoard(request):
                     content = Bank_info_rel
                     content["investments"] = Consent.objects.get(user = user).Investments
                     content["networth"] = Consent.objects.get(user = user).Networth
-                    content["lastupdated"] = Consent.objects.get(user = user).Last_Updated
+                    # content["lastupdated"] = Consent.objects.get(user = user).Last_Updated
 
                     print("\n\n\nContent : \n" ,  content)
 
