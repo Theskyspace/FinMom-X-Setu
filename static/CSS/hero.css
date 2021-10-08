@@ -120,4 +120,26 @@ img{
     .hero-image-col{
         display: none;
     }
+    .warning-message::before{
+        content: "This is a only desktop site";
+        opacity: 0.8;
+        color: black;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    }
   }
+
+  
+@media only screen and (max-width: 768px) {
+    .hero-image-col{
+        display: none;
+    }
+    .btn-custom{
+        display: none;
+    }
+    .btn-custom-outline{
+        display: none;
+    }
+
+ 
+
+}
