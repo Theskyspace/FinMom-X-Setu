@@ -73,6 +73,7 @@ def ProcessingData(request):
     UrlSigned = base_url + "/Consent/" + loc_Consent_ID
     Fetch_Signed_Consent = requests.get(UrlSigned , headers = headers)
     json_data = json.loads(Fetch_Signed_Consent.text)
+    print("\n\n\n\n Consent " , json_data ,"\n\n\n\n" )
     signedConsent = json_data["signedConsent"]
 
 
@@ -213,7 +214,7 @@ def ConsentFlow(request):
         json_data = json.loads(x.text)
         print(json_data)
         print("********",json_data["ConsentStatus"]["status"] == "READY")
-        
+        print(json_data)
         #If consent is accepted
         if(json_data["ConsentStatus"]["status"] == "READY"):
             #Render the dashboard page here
@@ -226,12 +227,12 @@ def ConsentFlow(request):
             user = request.user
             a = Consent.objects.get(user = user)
             a.ConsentID = json_data["ConsentStatus"]["id"]
+            a.save()
             
             # To check if the investments are made or not
             if(a.Investments == -1):
                 return redirect("load")
 
-            a.save()
 
             #Add here if the data of investment and networth is not available
             return redirect("DataDashBoard")
