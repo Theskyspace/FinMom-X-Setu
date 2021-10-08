@@ -102,3 +102,22 @@ img{
     font-family: 'Noto Sans Display', sans-serif;
     font-weight: 300;
 }
+
+
+@media only screen and (max-width: 600px) {
+    /* body {
+      display: none;
+    } */
+    .page2{
+        display: none;
+    }
+    .page3{
+        display: none;
+    }
+    .page4{
+        display: none;
+    }
+    .hero-image-col{
+        display: none;
+    }
+  }
