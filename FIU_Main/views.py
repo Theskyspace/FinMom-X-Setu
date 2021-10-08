@@ -651,7 +651,7 @@ def Bank(request,bank_data,range_no , purpose):
 
 @login_required(login_url = "index")
 def profile(request):
-    return render(request,"profile.html")
+    return render(request,"Profile.html")
 
 def goals(request):
     return render(request,"goals.html")
