@@ -387,7 +387,7 @@ def Passbook(request):
     Fetch_Data_JSON = json.loads(Fetch_Data.text)
 
 
-    print("\n\n\nFetch Data Json : ", Fetch_Data_JSON , "\n\n\n")
+    # print("\n\n\nFetch Data Json : ", Fetch_Data_JSON , "\n\n\n")
     for elements in Fetch_Data_JSON["FI"]:
             base64RemoteNonce = elements["KeyMaterial"]["Nonce"]
             print(elements["fipId"])
