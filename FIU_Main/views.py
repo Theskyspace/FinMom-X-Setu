@@ -150,9 +150,12 @@ def ProcessingData(request):
             elif(type in ["ulip",]):
                 # Insurance ammount
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["sumAssured"])
-            elif(type in ["ppf" , "epf"]):
+            elif(type in ["epf"]):
                 Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
                 investment += float(Decoded_Data_JSON["account"]["summary"]["currentBalance"])
+            elif(type in ["ppf"]):
+                Assets_Amount += float(Decoded_Data_JSON["account"]["summary"]["currenBalance"])
+                investment += float(Decoded_Data_JSON["account"]["summary"]["currenBalance"])
    
     # Feeding things into the database.
     database_instance = Consent.objects.get(user = user)
