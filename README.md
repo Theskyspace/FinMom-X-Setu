@@ -1,8 +1,15 @@
-# FinMom-X-Setu
-This project was a part of the hackathon conducted by the beautiful folks at setu and sponsered by Github India.
+# FinMom-X-Setu  <img src="https://badges.aleen42.com/src/python.svg" alt="badge"/>
+<br>
+<p align="center">
+  <img src="https://github.com/Theskyspace/FinMom-X-Setu/assets/43512801/8e9c9c33-4f6e-4fbf-9cde-b15ac6134475" style="border-radius:50%" />
+</p>
 
+This project was a part of the hackathon conducted by the beautiful folks at setu and sponsored by Github India.
 Depolyed version of the project\
-[Let's see](https://finmom.herokuapp.com/)
+
+[Let's see](https://finmom.herokuapp.com/) - _(Currently not working, Thanks to Heroku)_
+
+
 
 ## The problem FinMom solves
 One Stop Solution
